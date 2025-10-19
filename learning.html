@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>FinWise — Learning</title>
+    <link rel="stylesheet" href="styles/style.css" />
+  </head>
+  <body>
+    <div id="nav-placeholder"></div>
+    <main class="container">
+      <h2>Learning Hub</h2>
+      <div style="display:flex;gap:16px;align-items:center">
+  <input class="input" id="termSearchPage" placeholder="Search terms..." />
+        <div id="bookmarkSummary" class="muted small">Bookmarks: <span id="bookmarksKeep">0</span></div>
+      </div>
+      <ul id="termsListPage" class="terms"></ul>
+      <section class="card" style="margin-top:16px">
+        <h3>Your Bookmarks</h3>
+        <div id="myBookmarks" class="muted small">No bookmarks yet.</div>
+      </section>
+    </main>
+    <script src="scripts/nav.js"></script>
+    <script src="scripts/app.js"></script>
+    <script src="scripts/learning.js"></script>
+  </body>
+</html>

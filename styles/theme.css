@@ -1,0 +1,17 @@
+/* theme.css - dark mode and theme specific styles */
+body.dark{ --bg:#0b1220; --card:#071126; --muted:#9aa6b2; --accent:#06b6d4; --accent-2:#2563eb; --text:#e6eef6 }
+.dark .card{box-shadow: none}
+.tool input,.tool select{width:100%;padding:8px;margin:6px 0;border-radius:8px;border:1px solid #e6eef6}
+.dark .tool input,.dark .tool select{border-color:#102033;background:#071126;color:var(--text)}
+.dark .list li{border-color:#0f2030}
+.bookmark-btn{float:right}
+.progress{height:14px;background:#e6eef6;border-radius:999px;overflow:hidden;margin-top:8px}
+.progress > i{display:block;height:100%;background:linear-gradient(90deg,var(--accent),var(--accent-2));width:0%}
+.dark .progress{background:#072031}
+.theme-toggle{margin-left:8px}
+
+/* Dark mode specific blur background for logo */
+.dark .logo {
+    background: rgba(11, 18, 32, 0.75); /* Dark mode background based on --bg */
+    border-color: rgba(255, 255, 255, 0.1);
+}

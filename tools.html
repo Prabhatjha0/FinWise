@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>FinWise — Tools</title>
+    <link rel="stylesheet" href="styles/style.css" />
+  </head>
+  <body>
+    <div id="nav-placeholder"></div>
+    <main class="container">
+      <h2>Tools</h2>
+      <section class="card">
+        <h4>Interest Calculator</h4>
+  <label>Principal (₹)<input class="input" id="principalPage" type="number" value="10000" /></label>
+  <label>Rate (%)<input class="input" id="ratePage" type="number" value="5" step="0.1" /></label>
+  <label>Years<input class="input" id="yearsPage" type="number" value="2" /></label>
+        <button id="calcBtnPage" class="btn">Calculate</button>
+        <div id="interestResultPage" class="muted small"></div>
+      </section>
+      <section class="card" style="margin-top:16px">
+        <h4>Currency Converter</h4>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
+          <input class="input" id="convAmount" type="number" value="1000" />
+          <select id="convFrom" class="input"><option>INR</option><option>USD</option><option>EUR</option></select>
+          <select id="convTo" class="input"><option>USD</option><option>INR</option><option>EUR</option></select>
+          <button id="convBtn" class="btn">Convert</button>
+        </div>
+        <div id="convResult" class="muted small" style="margin-top:8px">Rates are demo-only.</div>
+      </section>
+    </main>
+    <script src="scripts/nav.js"></script>
+    <script src="scripts/tools-page.js"></script>
+  </body>
+</html>

@@ -1,0 +1,31 @@
+/* components.css - reusable components */
+.btn{background:transparent;border:1px solid var(--muted);padding:8px 12px;border-radius:8px;cursor:pointer;transition:all .18s ease;color:var(--text)}
+.btn:hover{transform:translateY(-1px);box-shadow:0 6px 16px rgba(2,6,23,0.06)}
+.btn.primary{background:linear-gradient(90deg,var(--accent),var(--accent-2));color:white;border:0}
+.card{background:var(--card);border-radius:var(--radius);padding:18px;box-shadow:0 10px 30px rgba(2,6,23,0.06)}
+.big{font-size:1.4rem;font-weight:700}
+.list{list-style:none;padding:0;margin:0}
+.list li{padding:10px;border-bottom:1px solid rgba(0,0,0,0.06)}
+.muted{color:var(--muted)}
+.small{font-size:0.9rem}
+.input{width:100%;padding:10px;border-radius:8px;border:1px solid #e6eef6}
+
+.input:focus{outline:none;box-shadow:0 6px 20px rgba(14,165,164,0.12);border-color:var(--accent)}
+
+.footer{padding:28px 24px;text-align:center;color:var(--muted);font-size:0.9rem}
+
+/* Added style to increase spacing for terms lists */
+.terms li {
+    padding: 15px 10px; /* Increased vertical padding */
+    margin-bottom: 5px; /* Added margin for separation */
+}
+
+/* Ensure progress bar background is set for comparison bar */
+.progress{height:14px;background:#e6eef6;border-radius:999px;overflow:hidden;margin-top:8px; position: relative;}
+.progress > i{display:block;height:100%;background:linear-gradient(90deg,var(--accent),var(--accent-2));width:0%}
+
+/* Custom height for comparison bar */
+#comparisonBar .progress {
+    height: 30px;
+    border: 1px solid var(--muted);
+}

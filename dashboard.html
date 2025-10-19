@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>FinWise — Dashboard</title>
+    <link rel="stylesheet" href="styles/style.css" />
+  </head>
+  <body>
+    <div id="nav-placeholder"></div>
+    <main class="container">
+      <h2 id="welcome">Dashboard</h2>
+      
+      <section class="dashboard-grid">
+        <div class="card summary-card">
+          <h4>Current Balance (Net Worth)</h4>
+          <div id="currentBalance" class="big">₹ 0.00</div>
+        </div>
+        <div class="card summary-card">
+          <h4>Total Income (Monthly)</h4>
+          <div id="totalIncome" class="big primary-text">₹ 0.00</div>
+          <button id="setIncomeBtn" class="btn small" style="margin-top: 8px;">Set Income</button>
+        </div>
+        <div class="card summary-card">
+          <h4>Total Expenditure (Monthly)</h4>
+          <div id="totalExpenses" class="big danger-text">₹ 0.00</div>
+        </div>
+      </section>
+
+      <section class="card" style="margin-top: 20px;">
+        <h3>Analytics & Visualizations</h3>
+        
+        <div id="comparisonBar" style="margin-bottom: 20px;">
+          <h4 class="muted small">Spending vs. National Average (Demo)</h4>
+          <div class="progress" style="height: 25px;">
+            <i id="userSpendingBar" style="width: 50%;"></i>
+            <span id="averageSpendingMarker" class="small muted spending-marker">Avg Marker</span>
+          </div>
+        </div>
+        
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px" class="chart-grid">
+          <div>
+            <h4>Category Breakdown</h4>
+            <div style="height:280px"><canvas id="catChart"></canvas></div>
+          </div>
+          <div>
+            <h4>Monthly Spending Trend</h4>
+            <div style="height:280px"><canvas id="monthChart"></canvas></div>
+          </div>
+        </div>
+      </section>
+      
+      <section class="card" style="margin-top: 20px;">
+        <h3>Personalized Insights & Tools</h3>
+        <div id="tips" class="muted">Click "Get quick tips" to analyze your spending.</div>
+        <div style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap">
+          <button id="genTips" class="btn primary">Get quick tips (AI Demo)</button>
+          <button id="exportCsv" class="btn">Export Expenses (CSV)</button>
+        </div>
+      </section>
+      
+      <div class="forms-grid">
+        <section class="card">
+          <h3>Quick Expense Entry</h3>
+          <form id="userExpenseForm">
+            <input class="input" type="text" id="udesc" placeholder="Description" required />
+            <input class="input" type="number" id="uamount" placeholder="Amount" required />
+            <select id="ucategory">
+              <option>Food</option>
+              <option>Transport</option>
+              <option>Bills</option>
+              <option>Entertainment</option>
+              <option>Education</option>
+              <option>Other</option>
+            </select>
+            <button class="btn primary" type="submit">Add Expense</button>
+          </form>
+          <h4 style="margin-top: 16px;">Recent Expenses</h4>
+          <ul id="userExpensesList" class="list small"></ul>
+        </section>
+
+        <section class="card">
+          <h3>Savings Goals</h3>
+          <form id="goalForm">
+            <input class="input" id="goalName" placeholder="Goal name (e.g., Emergency fund)" />
+            <input class="input" id="goalTarget" type="number" placeholder="Target amount" />
+            <input class="input" id="goalSaved" type="number" placeholder="Already saved (optional)" />
+            <button id="addGoalBtn" type="button" class="btn primary">Add goal</button>
+          </form>
+          <h4 style="margin-top: 16px;">Tracked Goals</h4>
+          <ul id="goalsList" class="list small"></ul>
+        </section>
+      </div>
+
+      <div class="info-grid">
+        <section class="card">
+          <h3>Investment Options (Demo)</h3>
+          <div id="investmentDemo" class="muted small">
+            <p><strong>Gold:</strong> ₹ 6,000 / gm ( +1.5% Today)</p>
+            <p><strong>Crypto:</strong> +8.2% (Avg. YTD)</p>
+            <p><em>Connect an Investment API to show live data.</em></p>
+          </div>
+        </section>
+        
+        <section class="card">
+          <h3>Bookmarked Learning/News</h3>
+          <div id="bookmarksPanel" class="muted small">No bookmarks yet.</div>
+        </section>
+      </div>
+      
+    </main>
+    <script src="scripts/nav.js"></script>
+    <script src="scripts/app.js"></script>
+    <script src="scripts/dashboard.js"></script>
+  </body>
+</html>

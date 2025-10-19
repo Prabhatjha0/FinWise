@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 64 64">
+  <defs>
+    <linearGradient id="g" x1="0" x2="1">
+      <stop offset="0" stop-color="#0ea5a4"/>
+      <stop offset="1" stop-color="#3b82f6"/>
+    </linearGradient>
+  </defs>
+  <rect rx="12" width="64" height="64" fill="url(#g)" />
+  <text x="50%" y="56%" font-size="30" font-family="Arial" fill="white" text-anchor="middle">FW</text>
+</svg>

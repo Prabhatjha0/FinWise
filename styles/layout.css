@@ -1,0 +1,38 @@
+/* layout.css - header, grid, responsive */
+.topbar{background:transparent;padding:12px 0;position:sticky;top:0;z-index:40}
+.topbar-inner{display:flex;align-items:center;justify-content:space-between}
+.logo{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    /* Added blur effect properties */
+    padding: 6px 10px; 
+    border-radius: var(--radius);
+    background: rgba(255, 255, 255, 0.75); /* Light mode background */
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border: 1px solid rgba(0, 0, 0, 0.05); /* subtle border */
+}
+.logo img{width:40px;height:40px}
+.brand{font-weight:700;font-size:1.2rem}
+.nav{display:flex;align-items:center;gap:12px}
+.nav .nav-items{display:flex;align-items:center;gap:12px}
+.nav a{color:var(--muted);text-decoration:none;padding:6px 8px;border-radius:6px}
+.nav a:hover{background:rgba(14,165,164,0.08);color:var(--accent-2)}
+.nav .btn{margin-left:6px}
+.nav-toggle{display:none;border:0;background:transparent;padding:8px;border-radius:8px}
+.nav-toggle svg{width:20px;height:20px}
+
+/* Add scroll-padding to account for the fixed topbar height */
+main section[id] {
+  scroll-margin-top: 40px; /* Adjust this value to be greater than the topbar's height */
+}
+
+/* mobile */
+@media (max-width:760px){
+  .nav .nav-items{display:none;flex-direction:column;background:var(--card);position:absolute;right:16px;top:64px;padding:12px;border-radius:10px;box-shadow:0 8px 30px rgba(2,6,23,0.12)}
+  .nav.open .nav-items{display:flex}
+  .nav-toggle{display:inline-flex}
+  .topbar-inner{padding:6px 0}
+  .hero-inner{flex-direction:column}
+}

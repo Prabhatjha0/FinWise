@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width,initial-scale=1" />
+		<title>FinWise — Track Your Finances & Learn</title>
+		<link rel="stylesheet" href="styles/style.css" />
+	</head>
+	<body>
+		<header class="topbar">
+			<div class="container topbar-inner">
+				<div class="logo">
+					<img src="assets/logo.svg" alt="FinWise logo" />
+					<span class="brand">FinWise</span>
+				</div>
+				<nav class="nav">
+					<div class="nav-items">
+						<a href="#vision">Vision</a>
+						<a href="#features">Features</a>
+						<a href="#learning">Learning</a>
+						<a href="#news">News</a>
+						<a href="login.html" id="loginBtn" class="btn">Login / Sign up</a>
+						<button id="themeToggle" class="btn theme-toggle"></button>
+					</div>
+				</nav>
+			</div>
+		</header>
+
+		<main>
+			<section class="hero">
+				<div class="container hero-inner">
+					<div class="hero-text">
+						<h1>FinWise — Track, Learn, and Improve Your Money Habits</h1>
+						<p class="lead">A simple web app for students and early professionals to track spending, get personalized tips, and learn finance concepts — all in one place.</p>
+						<div class="cta">
+							<a href="login.html" id="getStarted" class="btn primary">Get started — it's free</a>
+							<a class="muted" href="#features">See features</a>
+						</div>
+					</div>
+					<div class="hero-demo" id="demo">
+						<img src="assets/hero-img.png" alt="FinWise App Demo Screenshot" style="width:100%; height:auto; border-radius:var(--radius); box-shadow:var(--shadow);" />
+					</div>
+				</div>
+			</section>
+			
+			<section id="vision" class="container features">
+				<h2>Our Vision: Bridging the Financial Literacy Gap</h2>
+				<p class="lead">Most young earners and students lack accessible tools that combine personal finance tracking with simplified financial learning.</p>
+				<p>FinWise aims to bridge this gap by merging financial tracking, AI-driven insights, and educational resources in one place. It helps users make sense of their expenses and learn key financial concepts in context — creating awareness through action.</p>
+			</section>
+
+			<section id="features" class="container features">
+				<h2>Core Features</h2>
+				<div class="cards">
+					<div class="card">
+						<h3>Expense Tracking</h3>
+						<p>Add & categorize expenses. Visualize monthly trends and spot overspending.</p>
+					</div>
+					<div class="card">
+						<h3>Personalized Tips</h3>
+						<p>AI-driven insights give simple, actionable advice based on your data.</p>
+					</div>
+					<div class="card">
+						<h3>Learn Finance</h3>
+						<p>Short definitions, examples, and bookmarking for important terms.</p>
+					</div>
+				</div>
+			</section>
+
+			<section id="tools" class="container tools">
+				<h2>Try a Demo Tool</h2>
+				<div class="card tool" style="width:100%">
+					<select id="toolSelector" class="input" style="width:auto;margin-bottom:16px">
+						<option value="interest-calc">Interest Calculator</option>
+						<option value="currency-conv">Currency Converter</option>
+						<option value="investment-rates">Investment Rates (Demo)</option>
+					</select>
+					
+					<div id="interest-calc-tool" class="tool-content">
+						<h4>Compound Interest Calculator</h4>
+						<label>Principal (₹)<input class="input" id="principal" type="number" value="10000" /></label>
+						<label>Rate (%)<input class="input" id="rate" type="number" value="5" step="0.1" /></label>
+						<label>Years<input class="input" id="years" type="number" value="2" /></label>
+						<button id="calcBtn" class="btn">Calculate Compound Interest</button>
+						<div id="interestResult" class="muted small"></div>
+					</div>
+
+					<div id="currency-conv-tool" class="tool-content" style="display:none;">
+						<h4>Currency Converter</h4>
+						<div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
+							<input class="input" id="convAmount" type="number" value="1000" />
+							<select id="convFrom" class="input"><option>INR</option><option>USD</option><option>EUR</option></select>
+							<select id="convTo" class="input"><option>USD</option><option>INR</option><option>EUR</option></select>
+							<button id="convBtn" class="btn">Convert</button>
+						</div>
+						<div id="convResult" class="muted small" style="margin-top:8px">Rates are demo-only.</div>
+					</div>
+
+					<div id="investment-rates-tool" class="tool-content" style="display:none;">
+						<h4>Investment Rates Demo (Gold, Crypto, etc.)</h4>
+						<p>This section is a placeholder demonstrating where live investment data would appear.</p>
+						<ul class="list">
+							<li>Gold (per gram): <strong>₹ 6,000</strong> (Demo Rate)</li>
+							<li>Bitcoin (BTC): <strong>₹ 5,000,000</strong> (Demo Rate)</li>
+							<li>Avg. Mutual Fund Growth (1 Year): <strong>+12%</strong> (Demo Rate)</li>
+						</ul>
+					</div>
+
+				</div>
+			</section>
+
+			<section id="learning" class="container learning">
+				<h2>Learn: Economic Terms Highlights</h2>
+			<input class="input" id="termSearch" placeholder="Search terms like inflation, compound interest" />
+				<ul id="termsList" class="terms"></ul>
+			</section>
+
+			<section id="news" class="container news">
+				<h2>FinTech News Highlights</h2>
+				<div id="newsList" class="cards"></div>
+			</section>
+		</main>
+
+			<footer class="container footer">
+				<small>FinWise — Prototype • Not financial advice. Built as an extensible demo; plug in backend APIs, authentication, and AI services to expand functionality.</small>
+			</footer>
+
+		<script src="scripts/app.js"></script>
+		<script src="scripts/nav.js"></script>
+	</body>
+</html>
