@@ -84,7 +84,8 @@ const DUMMY_API = (() => {
   };
 
   // --- Data Management ---
-  const getIncome = () => Number(localStorage.getItem('fw_income_' + getActiveUser()) || 35000); // Increased default income
+  // THIS IS THE MODIFIED LINE
+  const getIncome = () => Number(localStorage.getItem('fw_income_' + getActiveUser()) || 150000); 
   const setIncome = (income) => localStorage.setItem('fw_income_' + getActiveUser(), income);
   
   const getExpenses = () => JSON.parse(localStorage.getItem(`fw_expenses_${getActiveUser()}`) || '[]');
