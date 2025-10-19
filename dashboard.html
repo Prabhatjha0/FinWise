@@ -1,116 +1,221 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width,initial-scale=1" />
-    <title>FinWise — Dashboard</title>
-    <link rel="stylesheet" href="styles/style.css" />
-  </head>
-  <body>
-    <div id="nav-placeholder"></div>
-    <main class="container">
-      <h2 id="welcome">Dashboard</h2>
-      
-      <section class="dashboard-grid">
-        <div class="card summary-card">
-          <h4>Current Balance (Net Worth)</h4>
-          <div id="currentBalance" class="big">₹ 0.00</div>
-        </div>
-        <div class="card summary-card">
-          <h4>Total Income (Monthly)</h4>
-          <div id="totalIncome" class="big primary-text">₹ 0.00</div>
-          <button id="setIncomeBtn" class="btn small" style="margin-top: 8px;">Set Income</button>
-        </div>
-        <div class="card summary-card">
-          <h4>Total Expenditure (Monthly)</h4>
-          <div id="totalExpenses" class="big danger-text">₹ 0.00</div>
-        </div>
-      </section>
 
-      <section class="card" style="margin-top: 20px;">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>FinWise — Dashboard</title>
+  <link rel="stylesheet" href="styles/style.css" />
+</head>
+
+<body class="dashboard-page">
+  <div id="toast-notification" class="toast"></div>
+  <div id="nav-placeholder"></div>
+  <main class="container">
+
+    <div id="demo-disclaimer" class="card demo-banner" style="display: none;">
+      <p>👋 Welcome! You're seeing sample data to demonstrate FinWise's features. It will be replaced as soon as you add
+        your first expense.</p>
+      <button id="close-disclaimer-btn" class="btn">&times;</button>
+    </div>
+
+    <h2 id="welcome">Dashboard</h2>
+
+    <section class="dashboard-grid">
+      <div class="card summary-card">
+        <h4>Current Balance (Net Worth)</h4>
+        <div id="currentBalance" class="big">₹ 0.00</div>
+      </div>
+      <div class="card summary-card">
+        <h4>Total Income (Monthly)</h4>
+        <div id="totalIncome" class="big primary-text">₹ 0.00</div>
+        <button id="setIncomeBtn" class="btn small" style="margin-top: 8px;">Set Income</button>
+      </div>
+      <div class="card summary-card">
+        <h4>Total Expenditure (Monthly)</h4>
+        <div id="totalExpenses" class="big danger-text">₹ 0.00</div>
+      </div>
+    </section>
+
+    <!-- FIND the section with the "Analytics & Visualizations" h3 tag and REPLACE it with this: -->
+    <section class="card analytics-hub">
+      <!-- New Header with Tabs -->
+      <div class="analytics-header">
         <h3>Analytics & Visualizations</h3>
-        
-        <div id="comparisonBar" style="margin-bottom: 20px;">
-          <h4 class="muted small">Spending vs. National Average (Demo)</h4>
-          <div class="progress" style="height: 25px;">
-            <i id="userSpendingBar" style="width: 50%;"></i>
-            <span id="averageSpendingMarker" class="small muted spending-marker">Avg Marker</span>
+        <div class="analytics-tabs" id="analytics-tabs">
+          <button class="tab-btn active" data-tab="breakdown">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+              stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21.21 15.89A10 10 0 1 1 8 2.83"></path>
+              <path d="M22 12A10 10 0 0 0 12 2v10z"></path>
+            </svg>
+            Breakdown
+          </button>
+          <button class="tab-btn" data-tab="trends">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+              stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="12" y1="20" x2="12" y2="10"></line>
+              <line x1="18" y1="20" x2="18" y2="4"></line>
+              <line x1="6" y1="20" x2="6" y2="16"></line>
+            </svg>
+            Trends
+          </button>
+          <button class="tab-btn" data-tab="comparison">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+              stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+              <circle cx="9" cy="7" r="4"></circle>
+              <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+              <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+            </svg>
+            Comparison
+          </button>
+        </div>
+      </div>
+
+      <!-- Tab Content Panels -->
+      <div class="analytics-content">
+        <div class="tab-content active" id="breakdown-tab">
+          <h4>Category Breakdown</h4>
+          <div class="chart-container">
+            <div class="chart-placeholder" id="catChartPlaceholder" style="display:none;">Add expenses to see a
+              breakdown.</div>
+            <canvas id="catChart"></canvas>
           </div>
         </div>
-        
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px" class="chart-grid">
-          <div>
-            <h4>Category Breakdown</h4>
-            <div style="height:280px"><canvas id="catChart"></canvas></div>
-          </div>
-          <div>
-            <h4>Monthly Spending Trend</h4>
-            <div style="height:280px"><canvas id="monthChart"></canvas></div>
+        <!-- REPLACE this entire div in your dashboard.html -->
+        <div class="tab-content" id="trends-tab">
+          <h4>Spending Trends by Category</h4>
+          <p class="muted small" style="text-align: center; margin-top: -1rem; margin-bottom: 1rem;">
+            Each bar shows your total monthly spending, broken down by category.
+          </p>
+          <div class="chart-container">
+            <div class="chart-placeholder" id="stackedMonthChartPlaceholder" style="display:none;">
+              Add expenses over multiple months to see your spending trends.
+            </div>
+            <canvas id="stackedMonthChart"></canvas>
           </div>
         </div>
-      </section>
-      
-      <section class="card" style="margin-top: 20px;">
-        <h3>Personalized Insights & Tools</h3>
-        <div id="tips" class="muted">Click "Get quick tips" to analyze your spending.</div>
-        <div style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap">
-          <button id="genTips" class="btn primary">Get quick tips (AI Demo)</button>
+      </div>
+      <div class="tab-content" id="comparison-tab">
+        <h4>Spending vs. National Average (Demo)</h4>
+        <p class="muted small" style="text-align: center; margin-top: -1rem; margin-bottom: 1rem;">
+          See how your spending in key categories stacks up against demo averages for early earners.
+        </p>
+        
+        <div class="comparison-list" id="comparison-list">
+          </div>
+
+        <div id="comparison-placeholder" class="chart-placeholder" style="display:none; min-height: 150px;">
+          Add expenses in categories like 'Food' or 'Bills' to see your comparison.
+        </div>
+      </div>
+      </div>
+    </section>
+
+    <!-- FIND the section with the "Personalized Insights & Tools" h3 tag and REPLACE it with this: -->
+    <section class="dashboard-grid-tertiary">
+      <!-- Card 1: AI Tips -->
+      <div class="card">
+        <h3>Personalized Insights</h3>
+        <div id="tips" class="muted small">Click the button to analyze your spending and get smart tips.</div>
+        <div style="margin-top:12px;">
+          <button id="genTips" class="btn primary">Get Quick Tips (AI Demo)</button>
+        </div>
+      </div>
+
+      <!-- Card 2: NEW Data Management Hub -->
+      <div class="card">
+        <h3>Data Management</h3>
+        <p class="muted small">Export your expense data or import it from a CSV file.</p>
+        <div class="data-management-buttons">
           <button id="exportCsv" class="btn">Export Expenses (CSV)</button>
-        </div>
-      </section>
-      
-      <div class="forms-grid">
-        <section class="card">
-          <h3>Quick Expense Entry</h3>
-          <form id="userExpenseForm">
-            <input class="input" type="text" id="udesc" placeholder="Description" required />
-            <input class="input" type="number" id="uamount" placeholder="Amount" required />
-            <select id="ucategory">
-              <option>Food</option>
-              <option>Transport</option>
-              <option>Bills</option>
-              <option>Entertainment</option>
-              <option>Education</option>
-              <option>Other</option>
-            </select>
-            <button class="btn primary" type="submit">Add Expense</button>
-          </form>
-          <h4 style="margin-top: 16px;">Recent Expenses</h4>
-          <ul id="userExpensesList" class="list small"></ul>
-        </section>
-
-        <section class="card">
-          <h3>Savings Goals</h3>
-          <form id="goalForm">
-            <input class="input" id="goalName" placeholder="Goal name (e.g., Emergency fund)" />
-            <input class="input" id="goalTarget" type="number" placeholder="Target amount" />
-            <input class="input" id="goalSaved" type="number" placeholder="Already saved (optional)" />
-            <button id="addGoalBtn" type="button" class="btn primary">Add goal</button>
-          </form>
-          <h4 style="margin-top: 16px;">Tracked Goals</h4>
-          <ul id="goalsList" class="list small"></ul>
-        </section>
-      </div>
-
-      <div class="info-grid">
-        <section class="card">
-          <h3>Investment Options (Demo)</h3>
-          <div id="investmentDemo" class="muted small">
-            <p><strong>Gold:</strong> ₹ 6,000 / gm ( +1.5% Today)</p>
-            <p><strong>Crypto:</strong> +8.2% (Avg. YTD)</p>
-            <p><em>Connect an Investment API to show live data.</em></p>
+          <div class="import-wrapper">
+            <input type="file" id="importCsvInput" accept=".csv" style="display: none;" />
+            <button id="importCsvBtn" class="btn primary">Import from CSV</button>
           </div>
-        </section>
-        
-        <section class="card">
-          <h3>Bookmarked Learning/News</h3>
-          <div id="bookmarksPanel" class="muted small">No bookmarks yet.</div>
-        </section>
+        </div>
+        <div id="import-instructions" class="muted small" style="margin-top:10px;">
+          <strong>Note:</strong> CSV must have headers: `date`, `category`, `amount`, `desc`.
+        </div>
       </div>
-      
-    </main>
-    <script src="scripts/nav.js"></script>
-    <script src="scripts/app.js"></script>
-    <script src="scripts/dashboard.js"></script>
-  </body>
+    </section>
+
+    <section class="dashboard-grid-secondary">
+
+      <div class="card">
+        <h3>Quick Expense Entry</h3>
+        <form id="userExpenseForm" class="quick-form">
+          <label>Description</label>
+          <input class="input" type="text" id="udesc" placeholder="e.g., Coffee" required />
+          <label>Amount</label>
+          <input class="input" type="number" id="uamount" placeholder="e.g., 150" required />
+          <label>Category</label>
+          <select id="ucategory" class="input">
+            <option>Food</option>
+            <option>Transport</option>
+            <option>Bills</option>
+            <option>Entertainment</option>
+            <option>Education</option>
+            <option>Other</option>
+          </select>
+          <button class="btn primary" type="submit">Add Expense</button>
+        </form>
+        <h4 class="list-header">Recent Expenses</h4>
+        <ul id="userExpensesList" class="list small"></ul>
+      </div>
+
+      <div class="card">
+        <h3>Savings Goals</h3>
+        <form id="goalForm" class="quick-form">
+          <label>Goal Name</label>
+          <input class="input" id="goalName" placeholder="e.g., New Laptop" />
+          <label>Target Amount</label>
+          <input class="input" id="goalTarget" type="number" placeholder="e.g., 50000" />
+          <label>Already Saved (Optional)</label>
+          <input class="input" id="goalSaved" type="number" placeholder="e.g., 10000" />
+          <button id="addGoalBtn" type="button" class="btn primary">Add Goal</button>
+        </form>
+        <h4 class="list-header">Your Goals</h4>
+        <ul id="goalsList" class="list small"></ul>
+      </div>
+
+      <div class="card">
+        <h3>Investment Hub (Demo)</h3>
+
+        <label>Select an Asset:</label>
+        <select id="assetSelect" class="input">
+          <option value="gold">Gold (per gram)</option>
+          <option value="nifty">Nifty 50 Index</option>
+          <option value="crypto">Crypto (BTC)</option>
+        </select>
+
+        <div class="investment-chart-container">
+          <canvas id="investmentChart"></canvas>
+        </div>
+
+        <div class="investment-calculator">
+          <h4>Investment Predictor</h4>
+          <p class="muted small">Based on 3-year average annual return.</p>
+          <label>Amount to Invest (₹)</label>
+          <input class="input" type="number" id="investAmount" placeholder="e.g., 25000" />
+          <label>For How Many Years?</label>
+          <input class="input" type="number" id="investYears" value="5" />
+          <button id="calculateInvestmentBtn" class="btn primary">Calculate Future Value</button>
+          <div id="investmentResult" class="tool-result"></div>
+        </div>
+      </div>
+
+    </section>
+
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <script src="scripts/api.js"></script>
+  <script src="scripts/app.js"></script>
+  <script src="scripts/nav.js"></script>
+  <script src="scripts/dashboard.js"></script>
+  <script src="scripts/chatbot.js" defer></script>
+</body>
+
 </html>

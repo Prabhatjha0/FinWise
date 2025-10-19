@@ -1,19 +1,32 @@
 /* layout.css - header, grid, responsive */
+
+/* This is your original topbar style (blur effect) */
 .topbar{background:transparent;padding:12px 0;position:sticky;top:0;z-index:40}
 .topbar-inner{display:flex;align-items:center;justify-content:space-between}
+
+/* --- LOGO STYLE UPDATE --- */
+/* We remove the background, filter, border, and padding from here */
 .logo{
     display:flex;
     align-items:center;
     gap:10px;
-    /* Added blur effect properties */
-    padding: 6px 10px; 
-    border-radius: var(--radius);
-    background: rgba(255, 255, 255, 0.75); /* Light mode background */
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
-    border: 1px solid rgba(0, 0, 0, 0.05); /* subtle border */
+    /* The background, backdrop-filter, border, and padding are GONE */
 }
-.logo img{width:40px;height:40px}
+
+/* This is the new rule for your logo.png */
+.logo-img {
+  height: 70px; /* Increased logo size */
+  width: auto;
+  display: block; /* Ensures proper alignment */
+}
+/* This empty rule is to override the old one you had, just in case */
+.logo img { } 
+
+.logo-link {
+    display: block;
+    line-height: 0; /* Prevents extra spacing */
+}
+
 .brand{font-weight:700;font-size:1.2rem}
 .nav{display:flex;align-items:center;gap:12px}
 .nav .nav-items{display:flex;align-items:center;gap:12px}

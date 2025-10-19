@@ -7,29 +7,92 @@
     <link rel="stylesheet" href="styles/style.css" />
   </head>
   <body>
+    <div id="toast-notification" class="toast"></div>
     <div id="nav-placeholder"></div>
     <main class="container">
-      <h2>Tools</h2>
-      <section class="card">
-        <h4>Interest Calculator</h4>
-  <label>Principal (₹)<input class="input" id="principalPage" type="number" value="10000" /></label>
-  <label>Rate (%)<input class="input" id="ratePage" type="number" value="5" step="0.1" /></label>
-  <label>Years<input class="input" id="yearsPage" type="number" value="2" /></label>
-        <button id="calcBtnPage" class="btn">Calculate</button>
-        <div id="interestResultPage" class="muted small"></div>
-      </section>
-      <section class="card" style="margin-top:16px">
-        <h4>Currency Converter</h4>
-        <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
-          <input class="input" id="convAmount" type="number" value="1000" />
-          <select id="convFrom" class="input"><option>INR</option><option>USD</option><option>EUR</option></select>
-          <select id="convTo" class="input"><option>USD</option><option>INR</option><option>EUR</option></select>
-          <button id="convBtn" class="btn">Convert</button>
-        </div>
-        <div id="convResult" class="muted small" style="margin-top:8px">Rates are demo-only.</div>
-      </section>
+      <div class="page-header">
+        <h2>Financial Tools</h2>
+        <p class="lead">A collection of calculators to help you plan and manage your finances.</p>
+      </div>
+
+      <!-- New Grid Layout -->
+      <div class="tools-grid">
+        <!-- Card 1: Compound Interest -->
+        <section class="card tool-card">
+            <h4 class="tool-title">
+              <span class="tool-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"></line><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
+              </span>
+              Compound Interest
+            </h4>
+            <div class="tool-body">
+              <label>Principal (₹)<input class="input" id="principal" type="number" value="10000" /></label>
+              <label>Rate (% Annually)<input class="input" id="rate" type="number" value="5" step="0.1" /></label>
+              <label>Years<input class="input" id="years" type="number" value="2" /></label>
+              <button data-tool="calculate-interest" class="btn primary">Calculate</button>
+              <div id="interestResult" class="tool-result"></div>
+            </div>
+        </section>
+
+        <!-- Card 2: Currency Converter -->
+        <section class="card tool-card">
+            <h4 class="tool-title">
+              <span class="tool-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"></path><path d="M2 12h20"></path><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>
+              </span>
+              Currency Converter
+            </h4>
+            <div class="tool-body">
+                <label>Amount<input class="input" id="convAmount" type="number" value="1000" /></label>
+                <div class="currency-selectors">
+                  <label>From<select id="convFrom" class="input"><option>INR</option><option>USD</option><option>EUR</option><option>GBP</option><option>JPY</option><option>AUD</option><option>CAD</option><option>CNY</option><option>AED</option></select></label>
+                  <label>To<select id="convTo" class="input"><option>USD</option><option>INR</option><option>EUR</option><option>GBP</option><option>JPY</option><option>AUD</option><option>CAD</option><option>CNY</option><option>AED</option></select></label>
+                </div>
+                <button data-tool="convert-currency" class="btn primary">Convert</button>
+                <div id="convResult" class="tool-result"></div>
+            </div>
+        </section>
+
+        <!-- Card 3: EMI Calculator -->
+        <section class="card tool-card">
+            <h4 class="tool-title">
+              <span class="tool-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 8c-2 0-2 2-4 2s-2-2-4-2"></path><path d="M20 16c-2 0-2 2-4 2s-2-2-4-2-2 2-4 2"></path><path d="M4 12c2 0 2-2 4-2s2 2 4 2 2-2 4-2 2 2 4 2"></path></svg>
+              </span>
+              EMI Calculator
+            </h4>
+            <div class="tool-body">
+              <label>Loan Amount (₹)<input class="input" id="emiAmount" type="number" value="500000" /></label>
+              <label>Interest Rate (% Annually)<input class="input" id="emiRate" type="number" value="8.5" step="0.1" /></label>
+              <label>Loan Tenure (Years)<input class="input" id="emiYears" type="number" value="5" /></label>
+              <button data-tool="calculate-emi" class="btn primary">Calculate EMI</button>
+              <div id="emiResult" class="tool-result"></div>
+            </div>
+        </section>
+        
+        <!-- Card 4: Savings Goal Calculator -->
+        <section class="card tool-card">
+            <h4 class="tool-title">
+              <span class="tool-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+              </span>
+              Savings Goal
+            </h4>
+            <div class="tool-body">
+              <label>Target Amount (₹)<input class="input" id="savingsTarget" type="number" value="100000" /></label>
+              <label>Time to Save (Months)<input class="input" id="savingsMonths" type="number" value="24" /></label>
+              <button data-tool="calculate-savings" class="btn primary">Calculate</button>
+              <div id="savingsResult" class="tool-result"></div>
+            </div>
+        </section>
+      </div>
     </main>
+
+    <!-- Ensure all necessary scripts are loaded -->
+    <script src="scripts/api.js"></script>
+    <script src="scripts/app.js"></script>
     <script src="scripts/nav.js"></script>
     <script src="scripts/tools-page.js"></script>
+    <script src="scripts/chatbot.js" defer></script>
   </body>
 </html>
