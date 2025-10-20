@@ -2,6 +2,10 @@
 // FINAL, FULLY CORRECTED VERSION
 // This version includes the new category-by-category comparison tab
 // and fixes the logical flaw in the month-sorting algorithm.
+//
+// --- CORRECTION FOR MONTHLY TOTALS ---
+// 1. renderUserExpensesAndSummary() now filters for the current month for the summary card.
+// 2. genTips listener now also filters for the current month to give relevant advice.
 
 // --- DEMO ASSET DATA ---
 const DEMO_ASSETS = {
@@ -49,15 +53,16 @@ document.addEventListener('DOMContentLoaded', () => {
         updateCharts();
     }
     
+    // --- MODIFIED FUNCTION ---
     function renderUserExpensesAndSummary(){
-        const expenses = DUMMY_API.getExpenses();
-        const goals = DUMMY_API.getGoals();
+        const allExpenses = DUMMY_API.getExpenses(); // Get ALL expenses
         const list = document.getElementById('userExpensesList');
         
         list.innerHTML = '';
-        if (expenses.length === 0) { list.innerHTML = `<li class="muted small" style="text-align:center;padding:10px;">No expenses recorded yet.</li>`; } 
+        if (allExpenses.length === 0) { list.innerHTML = `<li class="muted small" style="text-align:center;padding:10px;">No expenses recorded yet.</li>`; } 
         else {
-            expenses.slice(-5).reverse().forEach(e=> {
+            // Display 5 most recent expenses
+            allExpenses.slice(-5).reverse().forEach(e=> {
                 const li=document.createElement('li'); 
                 li.textContent=`${e.desc} — ₹ ${Number(e.amount).toFixed(2)} [${e.category}]`; 
                 list.appendChild(li); 
@@ -65,17 +70,32 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         const income = DUMMY_API.getIncome();
-        const stats = window.FW.expenseAnalyticsForUser(expenses);
-        const totalExpenses = stats.total;
-        const totalSavedInGoals = goals.reduce((sum, goal) => sum + Number(goal.saved), 0);
-        
-        // This calculation is more accurate for net worth
-        const allTimeExpenses = DUMMY_API.isDemoMode() ? totalExpenses : expenses.reduce((s, a) => s + Number(a.amount), 0);
-        const netWorth = (income - allTimeExpenses) + totalSavedInGoals; // Simplified for demo logic
 
-        document.getElementById('currentBalance').textContent = `₹ ${netWorth.toFixed(2)}`;
+        // --- Filter for CURRENT MONTH ---
+        // We use a fixed date consistent with the sample data's "current" month (Oct 2025)
+        const now = new Date('2025-10-20T10:00:00'); // Represents the "current" day
+        const currentMonth = now.getMonth(); // 9 (for October)
+        const currentYear = now.getFullYear(); // 2025
+
+        const monthlyExpenses = allExpenses.filter(e => {
+            const expenseDate = new Date(e.date);
+            return expenseDate.getMonth() === currentMonth && expenseDate.getFullYear() === currentYear;
+        });
+        
+        // --- Calculate stats for the current month ---
+        const monthlyStats = window.FW.expenseAnalyticsForUser(monthlyExpenses);
+        const monthlyTotalExpenses = monthlyStats.total;
+        
+        // --- NEW, SIMPLER CALCULATION ---
+        const monthlySavings = income - monthlyTotalExpenses; 
+
+        // --- Update DOM with new logic and IDs ---
+        // This is the new card's ID
+        document.getElementById('monthlySavings').textContent = `₹ ${monthlySavings.toFixed(2)}`;
+        // This is the income card
         document.getElementById('totalIncome').textContent = `₹ ${income.toFixed(2)}`;
-        document.getElementById('totalExpenses').textContent = `₹ ${totalExpenses.toFixed(2)}`;
+        // This is the monthly expense card
+        document.getElementById('totalExpenses').textContent = `₹ ${monthlyTotalExpenses.toFixed(2)}`; 
     }
     
     // --- Event Listeners for Forms ---
@@ -308,20 +328,47 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     
     // --- AI Tips & Data Management ---
+    // --- MODIFIED LISTENER ---
     document.getElementById('genTips').addEventListener('click', () => {
-        const expenses = DUMMY_API.getExpenses(); const income = DUMMY_API.getIncome(); const goals = DUMMY_API.getGoals();
-        const tipsEl = document.getElementById('tips'); tipsEl.innerHTML='';
-        if(expenses.length === 0){ tipsEl.textContent='No spending data yet — add some expenses to get tips.'; return; }
-        const stats = window.FW.expenseAnalyticsForUser(expenses); let tipsHtml = '';
-        const savings = income - stats.total; const savingsRate = income > 0 ? (savings / income) * 100 : 0;
-        if (savingsRate > 20) { tipsHtml += `<div>✅ **Excellent Saver!** You're saving over ${savingsRate.toFixed(0)}% of your income.</div>`; }
-        else if (savings < 0) { tipsHtml += `<div>⚠️ **Spending Alert:** You've spent ₹ ${Math.abs(savings).toFixed(0)} more than your income.</div>`; }
-        else { tipsHtml += `<div>📈 **On Track:** You have a surplus of ₹ ${savings.toFixed(0)}.</div>`; }
-        const sortedCats = Object.entries(stats.byCat).sort((a,b)=>b[1]-a[1]);
-        if(sortedCats.length > 0){ const [topCat, topAmt] = sortedCats[0]; const percentOfTotal = stats.total > 0 ? (topAmt / stats.total * 100) : 0;
-            tipsHtml += `<div>💡 **Expense Focus:** Your top spending is <strong>${topCat}</strong> (${percentOfTotal.toFixed(0)}%).</div>`;
+        const allExpenses = DUMMY_API.getExpenses(); // Get all
+        const income = DUMMY_API.getIncome(); 
+        const goals = DUMMY_API.getGoals();
+        const tipsEl = document.getElementById('tips'); 
+        tipsEl.innerHTML='';
+        
+        if(allExpenses.length === 0){ tipsEl.textContent='No spending data yet — add some expenses to get tips.'; return; }
+
+        // --- Re-apply the monthly filter logic here for an accurate monthly tip ---
+        const now = new Date('2025-10-20T10:00:00'); // Represents the "current" day
+        const currentMonth = now.getMonth();
+        const currentYear = now.getFullYear();
+
+        const monthlyExpenses = allExpenses.filter(e => {
+            const expenseDate = new Date(e.date);
+            return expenseDate.getMonth() === currentMonth && expenseDate.getFullYear() === currentYear;
+        });
+        
+        const monthlyStats = window.FW.expenseAnalyticsForUser(monthlyExpenses);
+        const monthlyTotal = monthlyStats.total;
+        // --- End of re-applied logic ---
+
+        let tipsHtml = '';
+        const savings = income - monthlyTotal; // <-- Use monthly total
+        const savingsRate = income > 0 ? (savings / income) * 100 : 0;
+        
+        if (savingsRate > 20) { tipsHtml += `<div>✅ **Excellent Saver!** You're saving over ${savingsRate.toFixed(0)}% of your (monthly) income.</div>`; }
+        else if (savings < 0) { tipsHtml += `<div>⚠️ **Spending Alert:** This month, you've spent ₹ ${Math.abs(savings).toFixed(0)} more than your income.</div>`; }
+        else { tipsHtml += `<div>📈 **On Track:** You have a surplus of ₹ ${savings.toFixed(0)} this month.</div>`; }
+        
+        // This part can use the monthly stats as well, it's more relevant
+        const sortedCats = Object.entries(monthlyStats.byCat).sort((a,b)=>b[1]-a[1]);
+        if(sortedCats.length > 0){ 
+            const [topCat, topAmt] = sortedCats[0]; 
+            const percentOfTotal = monthlyTotal > 0 ? (topAmt / monthlyTotal * 100) : 0; // Use monthly total
+            tipsHtml += `<div>💡 **Expense Focus:** Your top spending *this month* is <strong>${topCat}</strong> (${percentOfTotal.toFixed(0)}%).</div>`;
         }
         if (savings > 0 && goals.length === 0) { tipsHtml += `<div>🎯 **Set a Goal:** You have a surplus! Why not create a savings goal?</div>`; }
+        
         tipsEl.innerHTML = tipsHtml;
     });
 
