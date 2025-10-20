@@ -1,16 +1,13 @@
 // dashboard.js — per-user dashboard logic
 // FINAL, FULLY CORRECTED VERSION
-// This version includes the new category-by-category comparison tab
-// and fixes the logical flaw in the month-sorting algorithm.
 //
-// --- CORRECTION FOR MONTHLY TOTALS (from previous step) ---
-// 1. renderUserExpensesAndSummary() now uses the "Available to Save" logic.
-// 2. genTips listener now also filters for the current month to give relevant advice.
+// --- LATEST CHANGE (User Request) ---
+// 1. renderComparisonAnalytics() now filters for the CURRENT MONTH
+//    to match the main dashboard cards.
 //
-// --- NEW REALISTIC AI TIPS (User Request) ---
-// 1. genTips listener is now async and simulates "thinking".
-// 2. Tips are delivered sequentially with a delay.
-// 3. Added more complex tips: comparison to last month, specific category advice, goal suggestions.
+// --- PREVIOUS CHANGES ---
+// 1. "Available to Save" logic is implemented.
+// 2. Realistic, sequential AI tips are implemented.
 
 // --- DEMO ASSET DATA ---
 const DEMO_ASSETS = {
@@ -54,7 +51,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!DUMMY_API.isDemoMode()) { disclaimer.style.display = 'none'; }
         renderUserExpensesAndSummary();
         renderUserGoals();
-        renderComparisonAnalytics(); // New function for the comparison tab
+        renderComparisonAnalytics(); // This will now show monthly
         updateCharts();
     }
     
@@ -77,7 +74,6 @@ document.addEventListener('DOMContentLoaded', () => {
         const income = DUMMY_API.getIncome();
 
         // --- Filter for CURRENT MONTH ---
-        // We use a fixed date consistent with the sample data's "current" month (Oct 2025)
         const now = new Date('2025-10-20T10:00:00'); // Represents the "current" day
         const currentMonth = now.getMonth(); // 9 (for October)
         const currentYear = now.getFullYear(); // 2025
@@ -95,11 +91,8 @@ document.addEventListener('DOMContentLoaded', () => {
         const monthlySavings = income - monthlyTotalExpenses; 
 
         // --- Update DOM with new logic and IDs ---
-        // This is the new card's ID
         document.getElementById('monthlySavings').textContent = `₹ ${monthlySavings.toFixed(2)}`;
-        // This is the income card
         document.getElementById('totalIncome').textContent = `₹ ${income.toFixed(2)}`;
-        // This is the monthly expense card
         document.getElementById('totalExpenses').textContent = `₹ ${monthlyTotalExpenses.toFixed(2)}`; 
     }
     
@@ -151,16 +144,27 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // --- NEW COMPARISON TAB LOGIC ---
+    // --- UPDATED COMPARISON TAB LOGIC (Now Monthly) ---
     function renderComparisonAnalytics() {
-        // This function uses ALL-TIME expenses for the comparison tab, which is correct
-        // as it compares your overall habits vs. an average.
-        const expenses = DUMMY_API.getExpenses();
-        const stats = window.FW.expenseAnalyticsForUser(expenses);
-        const byCat = stats.byCat;
-        const userTotal = stats.total; // Get user's total spending
+        
+        // --- NEW: Filter for CURRENT MONTH ---
+        const allExpenses = DUMMY_API.getExpenses();
+        const now = new Date('2025-10-20T10:00:00'); // Represents the "current" day
+        const currentMonth = now.getMonth(); // 9 (for October)
+        const currentYear = now.getFullYear(); // 2025
 
-        // Demo averages for comparison
+        const monthlyExpenses = allExpenses.filter(e => {
+            const expenseDate = new Date(e.date);
+            return expenseDate.getMonth() === currentMonth && expenseDate.getFullYear() === currentYear;
+        });
+        // --- End of new filter ---
+
+        // Use the filtered monthly expenses
+        const stats = window.FW.expenseAnalyticsForUser(monthlyExpenses); 
+        const byCat = stats.byCat;
+        const userTotal = stats.total; // This is now the MONTHLY total
+
+        // Demo averages (which are already monthly)
         const DEMO_AVERAGES = {
             'Food': 4500,
             'Transport': 1500,
@@ -182,7 +186,7 @@ document.addEventListener('DOMContentLoaded', () => {
         let categoriesHtml = ''; // For individual categories
         let totalHtml = '';      // For the total bar
 
-        // --- 1. Generate TOTAL bar ---
+        // --- 1. Generate TOTAL bar (now compares monthly total) ---
         const maxTotalVal = Math.max(userTotal, avgTotal) * 1.5 || 1;
         const userTotalPercent = Math.min(100, (userTotal / maxTotalVal) * 100);
         const avgTotalPercent = Math.min(100, (avgTotal / maxTotalVal) * 100);
@@ -192,7 +196,7 @@ document.addEventListener('DOMContentLoaded', () => {
         totalHtml = `
             <div class="comparison-item comparison-item-total comparison-item-padded">
               <div class="comparison-labels">
-                <span>Total Spending</span>
+                <span>Total Spending (This Month)</span>
                 <span class="comparison-values">
                   <strong>Your: ₹${userTotal.toLocaleString('en-IN')}</strong> (Avg: ₹${avgTotal.toLocaleString('en-IN')})
                 </span>
@@ -204,7 +208,7 @@ document.addEventListener('DOMContentLoaded', () => {
             </div>
         `;
 
-        // --- 2. Generate Category bars ---
+        // --- 2. Generate Category bars (now compares monthly categories) ---
         categoriesToCompare.forEach(cat => {
             const userAmount = byCat[cat] || 0;
             const avgAmount = DEMO_AVERAGES[cat] || 0;
@@ -244,7 +248,10 @@ document.addEventListener('DOMContentLoaded', () => {
     let catChart = null, stackedMonthChart = null;
     
     function updateCharts() {
-        const expenses = DUMMY_API.getExpenses();
+        // This function uses ALL expenses, which is correct for charts
+        // The "Breakdown" chart shows all-time breakdown
+        // The "Trends" chart shows month-by-month
+        const expenses = DUMMY_API.getExpenses(); 
         const categories = [...new Set(expenses.map(e => e.category))].sort();
         const colors = ['#3b82f6', '#0ea5a4', '#f97316', '#ef4444', '#a78bfa', '#facc15'];
         const categoryColors = categories.reduce((acc, cat, i) => {
@@ -254,7 +261,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
-        // (Category Chart - Doughnut)
+        // (Category Chart - Doughnut) - This shows ALL-TIME breakdown
         const catCanvas = document.getElementById('catChart');
         const catPlaceholder = document.getElementById('catChartPlaceholder');
         const byCat = expenses.reduce((acc, a) => { acc[a.category] = (acc[a.category] || 0) + Number(a.amount); return acc; }, {});
@@ -269,7 +276,7 @@ document.addEventListener('DOMContentLoaded', () => {
             else { catChart = new Chart(catCanvas.getContext('2d'), { type: 'doughnut', data: { labels: catLabels, datasets: [{ data: catData, backgroundColor: colors, borderWidth: 0 }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'right' } }, cutout: '60%' } }); }
         }
         
-        // --- Stacked Monthly Chart by Category (The ONLY Trend Chart) ---
+        // --- Stacked Monthly Chart by Category (Trends) ---
         const stackedMonthCanvas = document.getElementById('stackedMonthChart');
         const stackedMonthPlaceholder = document.getElementById('stackedMonthChartPlaceholder');
         
