@@ -1,5 +1,13 @@
 /* theme.css - dark mode and theme specific styles */
-body.dark{ --bg:#0b1220; --card:#071126; --muted:#9aa6b2; --accent:#06b6d4; --accent-2:#2563eb; --text:#e6eef6 }
+/* A more neutral, gray-based dark theme */
+body.dark {
+  --bg: #18181b;       /* Neutral-900 */
+  --card: #27272a;     /* Neutral-800 */
+  --muted: #a1a1aa;    /* Neutral-400 */
+  --accent: #06b6d4;   /* Cyan-500 (Kept the same) */
+  --accent-2: #2563eb; /* Blue-600 (Kept the same) */
+  --text: #f4f4f5;     /* Neutral-100 */
+}
 .dark .card{box-shadow: none}
 .tool input,.tool select{width:100%;padding:8px;margin:6px 0;border-radius:8px;border:1px solid #e6eef6}
 .dark .tool input,.dark .tool select{border-color:#102033;background:#071126;color:var(--text)}
@@ -14,4 +22,29 @@ body.dark{ --bg:#0b1220; --card:#071126; --muted:#9aa6b2; --accent:#06b6d4; --ac
 .dark .logo {
     background: rgba(11, 18, 32, 0.75); /* Dark mode background based on --bg */
     border-color: rgba(255, 255, 255, 0.1);
+}
+
+/* --- Add these new rules to the end of theme.css --- */
+
+/* Brighter accents for Dark Mode */
+
+body.dark {
+  /* We keep your original dark mode accents as the default */
+  --accent: #06b6d4;   /* Brighter Teal */
+  --accent-2: #2563eb; /* Brighter Blue */
+}
+
+body.dark.theme-blue {
+  --accent: #3b82f6;   /* Brighter Blue 500 */
+  --accent-2: #60a5fa; /* Brighter Blue 400 */
+}
+
+body.dark.theme-green {
+  --accent: #22c55e;   /* Brighter Green 500 */
+  --accent-2: #4ade80; /* Brighter Green 400 */
+}
+
+body.dark.theme-orange {
+  --accent: #f97316;   /* Brighter Orange 500 */
+  --accent-2: #fb923c; /* Brighter Orange 400 */
 }

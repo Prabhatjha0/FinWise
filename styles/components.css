@@ -46,3 +46,85 @@
 .demo-banner button:hover {
     background: rgba(255,255,255,0.3);
 }
+
+/* --- ============================ --- */
+/* --- UPDATED THEME PICKER STYLES --- */
+/* --- ============================ --- */
+
+/* 1. The new wrapper */
+.theme-picker-wrapper {
+  position: relative; /* Anchors the popover */
+  display: flex;
+  align-items: center;
+  border-left: 1px solid var(--muted);
+  padding-left: 14px;
+  margin-left: 6px;
+}
+
+/* 2. The new toggle button */
+.theme-toggle-btn {
+  padding: 6px; /* Make it smaller than a text button */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.theme-toggle-btn svg {
+  width: 20px;
+  height: 20px;
+}
+
+/* 3. MODIFIED: The swatch container (now a popover) */
+.theme-picker {
+  display: flex;
+  gap: 10px;
+  position: absolute;
+  top: 120%; /* Position below the button */
+  right: 0;
+  background: var(--card);
+  padding: 12px;
+  border-radius: var(--radius);
+  box-shadow: 0 10px 30px rgba(2,6,23,0.1);
+  
+  /* Hide by default */
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-10px);
+  transition: all 0.2s ease;
+  z-index: 100;
+}
+.dark .theme-picker {
+  box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+}
+
+/* 4. Show the popover when wrapper is open */
+.theme-picker-wrapper.open .theme-picker {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+
+/* 5. The color swatches (no change, just moved) */
+.color-swatch {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  cursor: pointer;
+  border: 2px solid var(--card);
+  transition: all 0.2s ease;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.color-swatch:hover {
+  transform: scale(1.15);
+}
+
+.color-swatch.active {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent);
+}
+
+/* 6. Define the swatch colors (no change) */
+#swatch-default { background-color: #0ea5a4; } /* Teal */
+#swatch-blue { background-color: #3b82f6; } /* Blue */
+#swatch-green { background-color: #22c55e; } /* Green */
+#swatch-orange { background-color: #f97316; } /* Orange */

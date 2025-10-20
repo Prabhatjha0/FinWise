@@ -1,13 +1,50 @@
 /* base.css - reset, variables, typography */
-:root{
-  --bg:#f6fbff;
-  --card:#ffffff;
-  --muted:#6b7280;
-  --accent:#0ea5a4;
-  --accent-2:#3b82f6;
-  --text:#0f172a;
-  --radius:10px;
+:root {
+  --bg: #f6fbff;
+  --card: #ffffff;
+  --muted: #6b7280;
+  --text: #0f172a;
+  --radius: 10px;
+
+  /* --- 1. Define Color Palettes --- */
+  
+  /* Palette 1: Teal (Default) */
+  --c-teal-500: #0ea5a4;
+  --c-teal-600: #0d9488;
+  
+  /* Palette 2: Blue */
+  --c-blue-500: #3b82f6;
+  --c-blue-600: #2563eb;
+  
+  /* Palette 3: Green */
+  --c-green-500: #22c55e;
+  --c-green-600: #16a34a;
+
+  /* Palette 4: Orange */
+  --c-orange-500: #f97316;
+  --c-orange-600: #ea580c;
+
+  /* --- 2. Set Default Functional Colors --- */
+  /* This ensures the site works by default */
+  --accent: var(--c-teal-500);
+  --accent-2: var(--c-blue-500);
 }
+
+/* --- 3. Add Theme Override Classes --- */
+/* These classes will be added to the <body> tag */
+body.theme-blue {
+  --accent: var(--c-blue-500);
+  --accent-2: var(--c-blue-600);
+}
+body.theme-green {
+  --accent: var(--c-green-500);
+  --accent-2: var(--c-green-600);
+}
+body.theme-orange {
+  --accent: var(--c-orange-500);
+  --accent-2: var(--c-orange-600);
+}
+/* Teal is default, so it needs no class */
 *{box-sizing:border-box}
 html,body{height:100%}
 body{font-family:Inter,system-ui,Arial,sans-serif;background:var(--bg);color:var(--text);margin:0;line-height:1.45;-webkit-font-smoothing:antialiased}
