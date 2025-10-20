@@ -85,7 +85,7 @@ const DUMMY_API = (() => {
 
   // --- Data Management ---
   // THIS IS THE MODIFIED LINE
-  const getIncome = () => Number(localStorage.getItem('fw_income_' + getActiveUser()) || 20000); 
+  const getIncome = () => Number(localStorage.getItem('fw_income_' + getActiveUser()) || 30000); 
   const setIncome = (income) => localStorage.setItem('fw_income_' + getActiveUser(), income);
   
   const getExpenses = () => JSON.parse(localStorage.getItem(`fw_expenses_${getActiveUser()}`) || '[]');
