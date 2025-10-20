@@ -3,9 +3,14 @@
 // This version includes the new category-by-category comparison tab
 // and fixes the logical flaw in the month-sorting algorithm.
 //
-// --- CORRECTION FOR MONTHLY TOTALS ---
-// 1. renderUserExpensesAndSummary() now filters for the current month for the summary card.
+// --- CORRECTION FOR MONTHLY TOTALS (from previous step) ---
+// 1. renderUserExpensesAndSummary() now uses the "Available to Save" logic.
 // 2. genTips listener now also filters for the current month to give relevant advice.
+//
+// --- NEW REALISTIC AI TIPS (User Request) ---
+// 1. genTips listener is now async and simulates "thinking".
+// 2. Tips are delivered sequentially with a delay.
+// 3. Added more complex tips: comparison to last month, specific category advice, goal suggestions.
 
 // --- DEMO ASSET DATA ---
 const DEMO_ASSETS = {
@@ -53,7 +58,7 @@ document.addEventListener('DOMContentLoaded', () => {
         updateCharts();
     }
     
-    // --- MODIFIED FUNCTION ---
+    // --- (Simplified "Available to Save" logic) ---
     function renderUserExpensesAndSummary(){
         const allExpenses = DUMMY_API.getExpenses(); // Get ALL expenses
         const list = document.getElementById('userExpensesList');
@@ -148,8 +153,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- NEW COMPARISON TAB LOGIC ---
     function renderComparisonAnalytics() {
+        // This function uses ALL-TIME expenses for the comparison tab, which is correct
+        // as it compares your overall habits vs. an average.
         const expenses = DUMMY_API.getExpenses();
-        // Use the existing analytics helper to get expenses by category
         const stats = window.FW.expenseAnalyticsForUser(expenses);
         const byCat = stats.byCat;
         const userTotal = stats.total; // Get user's total spending
@@ -164,9 +170,7 @@ document.addEventListener('DOMContentLoaded', () => {
             'Education': 1200
         };
         
-        // Calculate total average
         const avgTotal = Object.values(DEMO_AVERAGES).reduce((a, b) => a + b, 0);
-
         const categoriesToCompare = [...new Set([...Object.keys(DEMO_AVERAGES), ...Object.keys(byCat)])];
         const comparisonListEl = document.getElementById('comparison-list');
         const placeholderEl = document.getElementById('comparison-placeholder');
@@ -204,20 +208,13 @@ document.addEventListener('DOMContentLoaded', () => {
         categoriesToCompare.forEach(cat => {
             const userAmount = byCat[cat] || 0;
             const avgAmount = DEMO_AVERAGES[cat] || 0;
-
-            // Only show categories where there is some data
             if (userAmount === 0 && avgAmount === 0) return;
             if (userAmount > 0) relevantExpensesFound = true;
-
-            // Determine max value for the bar (e.g., 1.5x the higher value, or 1 if both are 0)
             const maxVal = Math.max(userAmount, avgAmount) * 1.5 || 1;
-
             const userPercent = Math.min(100, (userAmount / maxVal) * 100);
             const avgPercent = Math.min(100, (avgAmount / maxVal) * 100);
             const isOver = userAmount > avgAmount;
-            const barColor = isOver ? '#ef4444' : '#0ea5a4'; // Red if over, teal if under/equal
-
-            // Add the padding class here
+            const barColor = isOver ? '#ef4444' : '#0ea5a4';
             categoriesHtml += `
                 <div class="comparison-item comparison-item-padded"> 
                   <div class="comparison-labels">
@@ -233,15 +230,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 </div>
             `;
         });
-
-        // --- 3. Combine and Render ---
         if (relevantExpensesFound || userTotal > 0) {
-            // Add categories first, then the total bar at the end
             comparisonListEl.innerHTML = categoriesHtml + totalHtml; 
             comparisonListEl.style.display = 'flex';
             placeholderEl.style.display = 'none';
         } else {
-            // Show placeholder if user has no expenses at all
             comparisonListEl.style.display = 'none';
             placeholderEl.style.display = 'flex';
         }
@@ -327,51 +320,123 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
     
-    // --- AI Tips & Data Management ---
-    // --- MODIFIED LISTENER ---
-    document.getElementById('genTips').addEventListener('click', () => {
-        const allExpenses = DUMMY_API.getExpenses(); // Get all
-        const income = DUMMY_API.getIncome(); 
-        const goals = DUMMY_API.getGoals();
-        const tipsEl = document.getElementById('tips'); 
-        tipsEl.innerHTML='';
-        
-        if(allExpenses.length === 0){ tipsEl.textContent='No spending data yet — add some expenses to get tips.'; return; }
+    // --- ======================================================= ---
+    // --- NEW, REALISTIC "AI" TIPS & DATA MANAGEMENT ---
+    // --- ======================================================= ---
+    
+    // Helper function to simulate AI "thinking" and typing
+    const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 
-        // --- Re-apply the monthly filter logic here for an accurate monthly tip ---
-        const now = new Date('2025-10-20T10:00:00'); // Represents the "current" day
+    document.getElementById('genTips').addEventListener('click', async () => {
+        const genTipsBtn = document.getElementById('genTips');
+        const tipsEl = document.getElementById('tips');
+        tipsEl.innerHTML = ''; // Clear old tips
+        genTipsBtn.disabled = true;
+        genTipsBtn.textContent = 'Analyzing...';
+        
+        // This helper function adds tips one by one
+        async function showTip(tip, delay = 500) {
+            await sleep(delay);
+            const tipElement = document.createElement('div');
+            tipElement.innerHTML = tip; // Use innerHTML to parse <strong> tags
+            tipsEl.appendChild(tipElement);
+        }
+
+        const allExpenses = DUMMY_API.getExpenses();
+        const income = DUMMY_API.getIncome();
+        const goals = DUMMY_API.getGoals();
+        
+        if(allExpenses.length === 0){ 
+            await showTip('No spending data yet — add some expenses to get tips.', 0);
+            genTipsBtn.disabled = false;
+            genTipsBtn.textContent = 'Get Quick Tips (AI Demo)';
+            return; 
+        }
+
+        // --- Data Prep for AI ---
+        const now = new Date('2025-10-20T10:00:00'); // "Current" day
         const currentMonth = now.getMonth();
         const currentYear = now.getFullYear();
-
-        const monthlyExpenses = allExpenses.filter(e => {
-            const expenseDate = new Date(e.date);
-            return expenseDate.getMonth() === currentMonth && expenseDate.getFullYear() === currentYear;
-        });
         
-        const monthlyStats = window.FW.expenseAnalyticsForUser(monthlyExpenses);
-        const monthlyTotal = monthlyStats.total;
-        // --- End of re-applied logic ---
+        const lastMonthDate = new Date(now.getFullYear(), now.getMonth() - 1, 1);
+        const lastMonth = lastMonthDate.getMonth();
+        const lastMonthYear = lastMonthDate.getFullYear();
+        
+        const monthlyExpenses = allExpenses.filter(e => {
+            const d = new Date(e.date); return d.getMonth() === currentMonth && d.getFullYear() === currentYear;
+        });
+        const lastMonthExpenses = allExpenses.filter(e => {
+            const d = new Date(e.date); return d.getMonth() === lastMonth && d.getFullYear() === lastMonthYear;
+        });
 
-        let tipsHtml = '';
-        const savings = income - monthlyTotal; // <-- Use monthly total
+        const monthlyStats = window.FW.expenseAnalyticsForUser(monthlyExpenses);
+        const lastMonthStats = window.FW.expenseAnalyticsForUser(lastMonthExpenses);
+        const monthlyTotal = monthlyStats.total;
+        
+        const tips = [];
+        
+        // --- Tip 1: Savings Rate ---
+        const savings = income - monthlyTotal;
         const savingsRate = income > 0 ? (savings / income) * 100 : 0;
         
-        if (savingsRate > 20) { tipsHtml += `<div>✅ **Excellent Saver!** You're saving over ${savingsRate.toFixed(0)}% of your (monthly) income.</div>`; }
-        else if (savings < 0) { tipsHtml += `<div>⚠️ **Spending Alert:** This month, you've spent ₹ ${Math.abs(savings).toFixed(0)} more than your income.</div>`; }
-        else { tipsHtml += `<div>📈 **On Track:** You have a surplus of ₹ ${savings.toFixed(0)} this month.</div>`; }
+        if (savingsRate > 20) {
+            tips.push(`✅ **Excellent Saver!** You're on track to save over **${savingsRate.toFixed(0)}%** of your income this month. Keep it up!`);
+        } else if (savings < 0) {
+            tips.push(`⚠️ **Spending Alert:** This month, you've spent **₹ ${Math.abs(savings).toFixed(0)}** more than your income. Let's review your top expenses.`);
+        } else {
+            tips.push(`📈 **On Track:** You have a surplus of **₹ ${savings.toFixed(0)}** so far this month. Good job sticking to your budget!`);
+        }
+
+        // --- Tip 2: Top Category & Comparison ---
+        const sortedCats = Object.entries(monthlyStats.byCat).sort((a,b)=>b[1]-b[1]);
         
-        // This part can use the monthly stats as well, it's more relevant
-        const sortedCats = Object.entries(monthlyStats.byCat).sort((a,b)=>b[1]-a[1]);
         if(sortedCats.length > 0){ 
             const [topCat, topAmt] = sortedCats[0]; 
-            const percentOfTotal = monthlyTotal > 0 ? (topAmt / monthlyTotal * 100) : 0; // Use monthly total
-            tipsHtml += `<div>💡 **Expense Focus:** Your top spending *this month* is <strong>${topCat}</strong> (${percentOfTotal.toFixed(0)}%).</div>`;
+            const percentOfTotal = monthlyTotal > 0 ? (topAmt / monthlyTotal * 100) : 0;
+            tips.push(`💡 **Expense Focus:** Your top spending category this month is <strong>${topCat}</strong>, making up **${percentOfTotal.toFixed(0)}%** of your expenses.`);
+
+            // --- Tip 3: Comparison to Last Month ---
+            const lastMonthAmt = lastMonthStats.byCat[topCat] || 0;
+            if (lastMonthAmt > 0) {
+                const diff = topAmt - lastMonthAmt;
+                const percentDiff = (diff / lastMonthAmt) * 100;
+                if (percentDiff > 10) {
+                    tips.push(`📊 **Trend Alert:** Your <strong>${topCat}</strong> spending is up by **${percentDiff.toFixed(0)}%** compared to last month. Is this a one-time expense?`);
+                } else if (percentDiff < -10) {
+                    tips.push(`📉 **Good Trend:** Great work! Your <strong>${topCat}</strong> spending is down by **${Math.abs(percentDiff).toFixed(0)}%** from last month.`);
+                }
+            }
         }
-        if (savings > 0 && goals.length === 0) { tipsHtml += `<div>🎯 **Set a Goal:** You have a surplus! Why not create a savings goal?</div>`; }
         
-        tipsEl.innerHTML = tipsHtml;
+        // --- Tip 4: Specific Category Advice ---
+        const foodPercent = (monthlyStats.byCat['Food'] || 0) / monthlyTotal;
+        if (foodPercent > 0.25) { // If food is > 25% of monthly spend
+            tips.push(`🍽️ **Food for Thought:** Your spending on 'Food' seems high. Consider planning meals for the week to help reduce costs.`);
+        }
+        
+        const entPercent = (monthlyStats.byCat['Entertainment'] || 0) / monthlyTotal;
+        if (entPercent > 0.20) { // If entertainment is > 20%
+             tips.push(`🎟️ **Entertainment:** This category is a high part of your spending. Try looking for free events or activities for your next outing.`);
+        }
+
+        // --- Tip 5: Goal Suggestion ---
+        if (savings > 0 && goals.length === 0) { 
+            tips.push(`🎯 **Set a Goal:** You have a surplus of **₹ ${savings.toFixed(0)}**! Why not create a savings goal? Head over to the 'Savings Goals' section to start.`);
+        } else if (savings > 0 && goals.length > 0) {
+            tips.push(`🎯 **Goal Boost:** You have **₹ ${savings.toFixed(0)}** in unallocated savings this month. Consider adding it to your '${goals[0].name}' goal!`);
+        }
+
+        // --- Render the tips one by one ---
+        for (const tip of tips) {
+            await showTip(tip, 600); // 0.6 second delay between each tip
+        }
+
+        // Re-enable the button
+        genTipsBtn.disabled = false;
+        genTipsBtn.textContent = 'Get Quick Tips (AI Demo)';
     });
 
+    // --- Data Management (Export/Import) ---
     document.getElementById('exportCsv')?.addEventListener('click', () => { 
         const arr = DUMMY_API.getExpenses(); if(!arr.length){ alert('No expenses to export'); return; }
         const csv = ['date,category,amount,desc', ...arr.map(e=>`${new Date(e.date).toISOString().substring(0,10)},${e.category},${Number(e.amount).toFixed(2)},"${e.desc.replace(/"/g, '""')}"`)].join('\n');
